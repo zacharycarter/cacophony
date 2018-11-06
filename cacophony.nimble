@@ -25,4 +25,4 @@ before install:
   setupTask()
 
 task test, "Runs the test suite":
-  exec "nim cpp -r tests/test1.nim"
+  exec "nim cpp --verbosity:3 -r tests/test1.nim"
