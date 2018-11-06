@@ -1,13 +1,25 @@
-sudo: false
 language: cpp
-os:
-  - linux
-  - osx
-dist: trusty
-addons:
-  apt:
-    packages:
-    - libssh2-1-dev
+matrix:
+  include:
+# OSX
+    - os: osx
+      sudo: yes
+      compiler: clang
+      env: OPJ_CI_ARCH=x86_64 OPJ_CI_INSTRUCTION_SETS="-mavx2" OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_INCLUDE_IF_DEPLOY=1
+    - os: linux
+      # "sudo: yes" and "dist: trusty" give us a worker with the AVX2 instruction set
+      sudo: yes
+      dist: trusty
+      compiler: clang-3.8
+      env: OPJ_CI_CC=clang-3.8 OPJ_CI_CXX=clang-3.8 OPJ_CI_INSTRUCTION_SETS="-mavx2" OPJ_CI_BUILD_CONFIGURATION=Release
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-precise-3.8
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-3.8
+            - libssh2-1-dev
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install libssh2; fi
